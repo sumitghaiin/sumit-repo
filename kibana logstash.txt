@@ -1,0 +1,35 @@
+redis port 6379
+
+on syslog server:-
+java -jar logstash-1.1.13-flatjar.jar agent -f syslog-server.conf
+
+
+on Kibana/logstash server:-
+
+start redis & elastic search
+
+nohup java -Xmx4G -Xms1G -jar logstash-1.1.13-flatjar.jar agent -f indexer.conf -- web --backend elasticsearch://10.0.0.216/ & 
+
+elatic search web console:- http://10.0.0.216:9200/_plugin/head/
+
+logstash:-	http://10.0.0.216:9292/search
+
+
+
+export PATH=/root/jruby-1.7.4/bin/:$PATH;export PATH
+cd /root/Kibana-0.2.0/
+
+nohup jruby kibana.rb &
+
+
+[20694] 06 Aug 14:30:49.193 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+[20694] 06 Aug 14:30:49.193 * The server is now ready to accept connections on port 6379
+
+
+      SECURITY WARNING: No secret option provided to Rack::Session::Cookie.
+        This poses a security threat. It is strongly recommended that you
+        provide a secret to prevent exploits that may be possible from crafted
+        cookies. This will not be supported in future versions of Rack, and
+        future versions will even invalidate your existing user cookies.
+
+

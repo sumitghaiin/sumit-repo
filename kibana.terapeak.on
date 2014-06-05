@@ -1,0 +1,36 @@
+<VirtualHost *:80>
+   ServerName kibana.terapeak.com
+   DocumentRoot "/var/www/Kibana-0.2.0/static"
+   ErrorLog logs/apache.error.log
+
+  <Directory /var/www/Kibana-0.2.0/static>
+        Options -MultiViews
+        Options Indexes FollowSymLinks
+   </Directory>
+
+  ProxyPreserveHost On
+  ProxyRequests Off
+  ProxyVia On
+ 
+   <Proxy *>
+	AllowOverride None
+        Order Deny,Allow
+        Allow from all
+
+       AuthBasicProvider ldap
+       AuthzLDAPAuthoritative  off
+       AuthLDAPURL "ldap://10.110.99.101/CN=Users,DC=ad,DC=terapeak,DC=com?sAMAccountName?sub?(objectClass=*)"
+       #AuthLDAPURL "ldap://10.100.10.101/CN=Users,DC=ad,DC=terapeak,DC=com?sAMAccountName?sub?(objectClass=*)"
+       AuthLDAPBindDN "CN=splunk,OU=Service Accounts,DC=ad,DC=terapeak,DC=com"
+       AuthLDAPBindPassword "Sd8yuqw1"
+       AuthLDAPGroupAttribute  memberOf
+       AuthLDAPGroupAttributeIsDN off
+       AuthName "Nagios Access"
+       AuthType Basic
+       Require valid-user
+   </Proxy>
+
+  ProxyPass / http://10.0.0.216:5601/
+  ProxyPassReverse / http://10.0.0.216:5601/
+
+</VirtualHost>

@@ -1,0 +1,19 @@
+#!/usr/bin/expect -f
+set timeout -1
+set fp [open "hosts" r]
+set data [read  -nonewline  $fp]
+close $fp
+foreach h [ split $data \n ] {
+spawn /usr/bin/ssh -o  ConnectTimeout=1 -o "StrictHostKeyChecking no"  root@$h
+expect {
+"*password:*" { send -- "sd8yuqw1\r" }
+"*onnection*" {continue}
+}
+expect {
+"*]#*" {send -- "printf \"`hostname` `ifconfig |grep Mask|awk -F ':' '\{print \$2\}'|awk '\{print \$1\}'|tr '\\n' '\\t'`\\n\"|ssh  -o 'StrictHostKeyChecking no' root\@10.100.20.10 'cat>>/tmp/b'\r"}
+break
+}
+expect "*password:*" { send -- "sd8yuqw1\r" }
+expect "*]#*" {send -- "exit\r"}
+expect eof;
+}
